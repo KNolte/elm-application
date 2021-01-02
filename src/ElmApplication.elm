@@ -16,15 +16,29 @@ urlPrefix =
     "http://elm-in-action.com/"
 
 
-type alias Msg =
-    { description : String, data : String }
+type ThumbnailSize
+    = Small
+    | Medium
+    | Large
+
+
+type Msg
+    = ClickedPhoto String
+    | ClickedSize ThumbnailSize
+    | ClickedSurpriseMe
 
 
 view : Model -> Html Msg
 view model =
     div [ class "content" ]
         [ h1 [] [ text "Elm Application" ]
-        , div [ id "thumbnails" ]
+        , button
+            [ onClick ClickedSurpriseMe ]
+            [ text "Surprise Me!" ]
+        , h3 [] [ text "Thumbnail Size:" ]
+        , div [ id "choose-size" ]
+            (List.map viewSizeChooser [ Small, Medium, Large ])
+        , div [ id "thumbnails", class (sizeToString model.chosenSize) ]
             (List.map (viewThumbnail model.selectedUrl) model.photos)
         , img
             [ class "large"
@@ -34,18 +48,41 @@ view model =
         ]
 
 
+viewThumbnail : String -> Photo -> Html Msg
 viewThumbnail selectedUrl thumb =
     img
         [ src (urlPrefix ++ thumb.url)
         , classList [ ( "selected", selectedUrl == thumb.url ) ]
-        , onClick { description = "ClickedPhoto", data = thumb.url }
+        , onClick (ClickedPhoto thumb.url)
         ]
         []
+
+
+viewSizeChooser : ThumbnailSize -> Html Msg
+viewSizeChooser size =
+    label []
+        [ input [ type_ "radio", name "size", onClick (ClickedSize size) ] []
+        , text (sizeToString size)
+        ]
+
+
+sizeToString : ThumbnailSize -> String
+sizeToString size =
+    case size of
+        Small ->
+            "small"
+
+        Medium ->
+            "med"
+
+        Large ->
+            "large"
 
 
 type alias Model =
     { photos : List Photo
     , selectedUrl : String
+    , chosenSize : ThumbnailSize
     }
 
 
@@ -57,6 +94,7 @@ initialModel =
         , { url = "3.jpeg" }
         ]
     , selectedUrl = "1.jpeg"
+    , chosenSize = Medium
     }
 
 
@@ -65,12 +103,27 @@ photoArray =
     Array.fromList initialModel.photos
 
 
-update msg model =
-    if msg.description == "ClickedPhoto" then
-        { model | selectedUrl = msg.data }
+getPhotoUrl : Int -> String
+getPhotoUrl index =
+    case Array.get index photoArray of
+        Just photo ->
+            photo.url
 
-    else
-        model
+        Nothing ->
+            ""
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        ClickedPhoto url ->
+            { model | selectedUrl = url }
+
+        ClickedSize size ->
+            { model | chosenSize = size }
+
+        ClickedSurpriseMe ->
+            { model | selectedUrl = "2.jpeg" }
 
 
 main =
