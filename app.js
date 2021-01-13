@@ -6281,7 +6281,7 @@ var $author$project$ElmApplication$initialCmd = $elm$http$Http$get(
 	});
 var $author$project$ElmApplication$Loading = {$: 'Loading'};
 var $author$project$ElmApplication$Medium = {$: 'Medium'};
-var $author$project$ElmApplication$initialModel = {chosenSize: $author$project$ElmApplication$Medium, status: $author$project$ElmApplication$Loading};
+var $author$project$ElmApplication$initialModel = {chosenSize: $author$project$ElmApplication$Medium, hue: 5, noise: 5, ripple: 5, status: $author$project$ElmApplication$Loading};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$ElmApplication$Errored = function (a) {
@@ -6562,7 +6562,7 @@ var $author$project$ElmApplication$update = F2(
 						model,
 						{chosenSize: size}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'ClickedSurpriseMe':
 				var _v2 = model.status;
 				switch (_v2.$) {
 					case 'Loaded':
@@ -6586,6 +6586,27 @@ var $author$project$ElmApplication$update = F2(
 						var errorMessage = _v2.a;
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
+			case 'SlidHue':
+				var hue = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{hue: hue}),
+					$elm$core$Platform$Cmd$none);
+			case 'SlidRipple':
+				var ripple = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{ripple: ripple}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var noise = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{noise: noise}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -6603,6 +6624,15 @@ var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$ElmApplication$ClickedSurpriseMe = {$: 'ClickedSurpriseMe'};
 var $author$project$ElmApplication$Large = {$: 'Large'};
+var $author$project$ElmApplication$SlidHue = function (a) {
+	return {$: 'SlidHue', a: a};
+};
+var $author$project$ElmApplication$SlidNoise = function (a) {
+	return {$: 'SlidNoise', a: a};
+};
+var $author$project$ElmApplication$SlidRipple = function (a) {
+	return {$: 'SlidRipple', a: a};
+};
 var $author$project$ElmApplication$Small = {$: 'Small'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
@@ -6642,11 +6672,86 @@ var $elm$html$Html$Attributes$src = function (url) {
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
 var $author$project$ElmApplication$urlPrefix = 'http://elm-in-action.com/';
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Attributes$max = $elm$html$Html$Attributes$stringProperty('max');
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $author$project$ElmApplication$onSlide = function (toMsg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'slide',
+		A2(
+			$elm$json$Json$Decode$map,
+			toMsg,
+			A2(
+				$elm$json$Json$Decode$at,
+				_List_fromArray(
+					['detail', 'userSlidTo']),
+				$elm$json$Json$Decode$int)));
+};
+var $elm$virtual_dom$VirtualDom$property = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_property,
+			_VirtualDom_noInnerHtmlOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$html$Html$Attributes$property = $elm$virtual_dom$VirtualDom$property;
+var $elm$virtual_dom$VirtualDom$node = function (tag) {
+	return _VirtualDom_node(
+		_VirtualDom_noScript(tag));
+};
+var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
+var $author$project$ElmApplication$rangeSlider = F2(
+	function (attributes, children) {
+		return A3($elm$html$Html$node, 'range-slider', attributes, children);
+	});
+var $author$project$ElmApplication$viewFilter = F3(
+	function (toMsg, name, magnitude) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('filter-slider')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(name)
+						])),
+					A2(
+					$author$project$ElmApplication$rangeSlider,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$max('11'),
+							A2(
+							$elm$html$Html$Attributes$property,
+							'val',
+							$elm$json$Json$Encode$int(magnitude)),
+							$author$project$ElmApplication$onSlide(toMsg)
+						]),
+					_List_Nil),
+					A2(
+					$elm$html$Html$label,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$elm$core$String$fromInt(magnitude))
+						]))
+				]));
+	});
 var $author$project$ElmApplication$ClickedSize = function (a) {
 	return {$: 'ClickedSize', a: a};
 };
 var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $author$project$ElmApplication$viewSizeChooser = function (size) {
@@ -6721,7 +6826,7 @@ var $author$project$ElmApplication$viewThumbnail = F2(
 			_List_Nil);
 	});
 var $author$project$ElmApplication$viewLoaded = F3(
-	function (photos, selectedUrl, chosenSize) {
+	function (photos, selectedUrl, model) {
 		return _List_fromArray(
 			[
 				A2(
@@ -6740,6 +6845,18 @@ var $author$project$ElmApplication$viewLoaded = F3(
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Surprise Me!')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('filters')
+					]),
+				_List_fromArray(
+					[
+						A3($author$project$ElmApplication$viewFilter, $author$project$ElmApplication$SlidHue, 'Hue', model.hue),
+						A3($author$project$ElmApplication$viewFilter, $author$project$ElmApplication$SlidRipple, 'Ripple', model.ripple),
+						A3($author$project$ElmApplication$viewFilter, $author$project$ElmApplication$SlidNoise, 'Noise', model.noise)
 					])),
 				A2(
 				$elm$html$Html$h3,
@@ -6765,7 +6882,7 @@ var $author$project$ElmApplication$viewLoaded = F3(
 					[
 						$elm$html$Html$Attributes$id('thumbnails'),
 						$elm$html$Html$Attributes$class(
-						$author$project$ElmApplication$sizeToString(chosenSize))
+						$author$project$ElmApplication$sizeToString(model.chosenSize))
 					]),
 				A2(
 					$elm$core$List$map,
@@ -6794,7 +6911,7 @@ var $author$project$ElmApplication$view = function (model) {
 				case 'Loaded':
 					var photos = _v0.a;
 					var selectedUrl = _v0.b;
-					return A3($author$project$ElmApplication$viewLoaded, photos, selectedUrl, model.chosenSize);
+					return A3($author$project$ElmApplication$viewLoaded, photos, selectedUrl, model);
 				case 'Loading':
 					return _List_fromArray(
 						[
